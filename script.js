@@ -1,68 +1,95 @@
-// Referencias a los elementos del formulario
-const form = document.getElementById('registroForm');
-const nombre = document.getElementById('nombre');
-const correo = document.getElementById('correo');
-const password = document.getElementById('password');
-const confirmPassword = document.getElementById('confirmPassword');
-const edad = document.getElementById('edad');
-const telefono = document.getElementById('telefono');
-const pais = document.getElementById('pais');
-const terminos = document.getElementById('terminos');
-const formMessage = document.getElementById('formMessage');
-const progressFill = document.getElementById('progressFill');
-const strengthFill = document.getElementById('strengthFill');
-const strengthText = document.getElementById('strengthText');
+const card = document.getElementById("card");
+const form = document.getElementById("registroForm");
+const nombre = document.getElementById("nombre");
+const correo = document.getElementById("correo");
+const password = document.getElementById("password");
+const confirmPassword = document.getElementById("confirmPassword");
+const fechaNacimiento = document.getElementById("fechaNacimiento");
+const telefono = document.getElementById("telefono");
+const pais = document.getElementById("pais");
+const terminos = document.getElementById("terminos");
+const formMessage = document.getElementById("formMessage");
+const progressFill = document.getElementById("progressFill");
+const strengthFill = document.getElementById("strengthFill");
+const strengthText = document.getElementById("strengthText");
+const submitBtn = document.getElementById("submitBtn");
 
-const camposRequeridos = [nombre, correo, password, confirmPassword, edad, telefono, pais, terminos];
+const camposRequeridos = [
+  nombre,
+  correo,
+  password,
+  confirmPassword,
+  fechaNacimiento,
+  telefono,
+  pais,
+  terminos,
+];
 
-// Expresiones regulares utilizadas en las validaciones
 const patterns = {
   nombre: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,50}$/,
   correo: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
   password: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
-  telefono: /^0\d{9}$/
+  telefono: /^0\d{9}$/,
 };
 
-// Dispara una pequeña animación de "shake" sobre un elemento
-function triggerShake(el) {
-  el.classList.remove('shake');
-  // Forzar reflow para poder reiniciar la animación
+function toISO(d) {
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+const hoy = new Date();
+const maxFecha = new Date(
+  hoy.getFullYear() - 18,
+  hoy.getMonth(),
+  hoy.getDate(),
+);
+fechaNacimiento.max = toISO(maxFecha);
+fechaNacimiento.min = "1900-01-01";
+
+function calcularEdad(valor) {
+  const [y, m, d] = valor.split("-").map(Number);
+  let edad = hoy.getFullYear() - y;
+  const antesDeCumple =
+    hoy.getMonth() + 1 < m || (hoy.getMonth() + 1 === m && hoy.getDate() < d);
+  if (antesDeCumple) edad--;
+  return edad;
+}
+
+function vibrar(el, patron = [60, 40, 60]) {
+  el.classList.remove("shake");
   void el.offsetWidth;
-  el.classList.add('shake');
-  el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
+  el.classList.add("shake");
+  el.addEventListener("animationend", () => el.classList.remove("shake"), {
+    once: true,
+  });
+  if (navigator.vibrate) navigator.vibrate(patron);
 }
 
-// Marca un campo como inválido y muestra su mensaje de error
-function showError(input, message) {
-  const errorSpan = document.getElementById(`error-${input.id}`);
-  if (errorSpan) errorSpan.textContent = message;
-  input.classList.add('invalid');
-  input.classList.remove('valid');
-  triggerShake(input);
+function showError(input, message, shake = true) {
+  const span = document.getElementById(`error-${input.id}`);
+  if (span) span.textContent = message;
+  input.classList.add("invalid");
+  input.classList.remove("valid");
+  if (shake) vibrar(input);
 }
 
-// Marca un campo como válido y limpia el mensaje de error
 function clearError(input) {
-  const errorSpan = document.getElementById(`error-${input.id}`);
-  if (errorSpan) errorSpan.textContent = '';
-  input.classList.remove('invalid');
-  input.classList.add('valid');
+  const span = document.getElementById(`error-${input.id}`);
+  if (span) span.textContent = "";
+  input.classList.remove("invalid");
+  input.classList.add("valid");
 }
 
-// Calcula cuántos campos requeridos están completos y válidos para animar la barra de progreso
 function updateProgress() {
-  const completados = camposRequeridos.filter(campo => {
-    if (campo.type === 'checkbox') return campo.checked;
-    return campo.classList.contains('valid');
-  }).length;
-
-  const porcentaje = Math.round((completados / camposRequeridos.length) * 100);
-  progressFill.style.width = `${porcentaje}%`;
+  const completados = camposRequeridos.filter((c) =>
+    c.type === "checkbox" ? c.checked : c.classList.contains("valid"),
+  ).length;
+  progressFill.style.width = `${Math.round((completados / camposRequeridos.length) * 100)}%`;
 }
 
-function validateNombre() {
+function validateNombre(shake = false) {
   if (!patterns.nombre.test(nombre.value.trim())) {
-    showError(nombre, 'Ingresa un nombre válido (mínimo 3 letras)');
+    showError(nombre, "Ingresa un nombre válido (mínimo 3 letras)", shake);
     updateProgress();
     return false;
   }
@@ -71,9 +98,9 @@ function validateNombre() {
   return true;
 }
 
-function validateCorreo() {
+function validateCorreo(shake = false) {
   if (!patterns.correo.test(correo.value.trim())) {
-    showError(correo, 'Ingresa un correo electrónico válido');
+    showError(correo, "Ingresa un correo electrónico válido", shake);
     updateProgress();
     return false;
   }
@@ -82,49 +109,51 @@ function validateCorreo() {
   return true;
 }
 
-// Evalúa qué tan fuerte es la contraseña y anima la barra correspondiente
 function updatePasswordStrength() {
-  const valor = password.value;
+  const v = password.value;
   let puntaje = 0;
-
-  if (valor.length >= 8) puntaje++;
-  if (/[A-Z]/.test(valor)) puntaje++;
-  if (/\d/.test(valor)) puntaje++;
-  if (/[^A-Za-z0-9]/.test(valor)) puntaje++;
-
+  if (v.length >= 8) puntaje++;
+  if (/[A-Z]/.test(v)) puntaje++;
+  if (/\d/.test(v)) puntaje++;
+  if (/[^A-Za-z0-9]/.test(v)) puntaje++;
   const niveles = [
-    { ancho: '0%', color: 'transparent', texto: '' },
-    { ancho: '25%', color: '#dc2626', texto: 'Débil' },
-    { ancho: '50%', color: '#f59e0b', texto: 'Media' },
-    { ancho: '75%', color: '#3b82f6', texto: 'Buena' },
-    { ancho: '100%', color: '#16a34a', texto: 'Fuerte' }
+    { ancho: "0%", color: "transparent", texto: "" },
+    { ancho: "25%", color: "#dc2626", texto: "Débil" },
+    { ancho: "50%", color: "#f59e0b", texto: "Media" },
+    { ancho: "75%", color: "#3b82f6", texto: "Buena" },
+    { ancho: "100%", color: "#16a34a", texto: "Fuerte" },
   ];
-
-  const nivel = valor === '' ? niveles[0] : niveles[puntaje];
-  strengthFill.style.width = nivel.ancho;
-  strengthFill.style.backgroundColor = nivel.color;
-  strengthText.textContent = nivel.texto;
-  strengthText.style.color = nivel.color === 'transparent' ? 'var(--color-text-light)' : nivel.color;
+  const n = v === "" ? niveles[0] : niveles[puntaje];
+  strengthFill.style.width = n.ancho;
+  strengthFill.style.backgroundColor = n.color;
+  strengthText.textContent = n.texto;
+  strengthText.style.color =
+    n.color === "transparent" ? "var(--color-text-light)" : n.color;
 }
 
-function validatePassword() {
+function validatePassword(shake = false) {
   updatePasswordStrength();
-
   if (!patterns.password.test(password.value)) {
-    showError(password, 'Mínimo 8 caracteres: mayúscula, número y carácter especial (ej: !@#$)');
+    showError(
+      password,
+      "Mínimo 8 caracteres: mayúscula, número y carácter especial (ej: !@#$)",
+      shake,
+    );
     updateProgress();
     return false;
   }
   clearError(password);
-  // Si ya se había escrito la confirmación, se vuelve a verificar
   if (confirmPassword.value) validateConfirmPassword();
   updateProgress();
   return true;
 }
 
-function validateConfirmPassword() {
-  if (confirmPassword.value === '' || confirmPassword.value !== password.value) {
-    showError(confirmPassword, 'Las contraseñas no coinciden');
+function validateConfirmPassword(shake = false) {
+  if (
+    confirmPassword.value === "" ||
+    confirmPassword.value !== password.value
+  ) {
+    showError(confirmPassword, "Las contraseñas no coinciden", shake);
     updateProgress();
     return false;
   }
@@ -133,21 +162,38 @@ function validateConfirmPassword() {
   return true;
 }
 
-function validateEdad() {
-  const valor = Number(edad.value);
-  if (!edad.value || valor < 18 || valor > 99) {
-    showError(edad, 'Ingresa una edad entre 18 y 99 años');
+function validateFechaNacimiento(shake = false) {
+  const valor = fechaNacimiento.value;
+  if (!valor) {
+    showError(fechaNacimiento, "Ingresa tu fecha de nacimiento", shake);
     updateProgress();
     return false;
   }
-  clearError(edad);
+  const fecha = new Date(valor + "T00:00:00");
+  if (isNaN(fecha) || fecha > hoy) {
+    showError(fechaNacimiento, "La fecha no es válida", shake);
+    updateProgress();
+    return false;
+  }
+  const edad = calcularEdad(valor);
+  if (edad < 18) {
+    showError(fechaNacimiento, "Debes ser mayor de 18 años", shake);
+    updateProgress();
+    return false;
+  }
+  if (edad > 99) {
+    showError(fechaNacimiento, "Ingresa una fecha de nacimiento válida", shake);
+    updateProgress();
+    return false;
+  }
+  clearError(fechaNacimiento);
   updateProgress();
   return true;
 }
 
-function validateTelefono() {
+function validateTelefono(shake = false) {
   if (!patterns.telefono.test(telefono.value.trim())) {
-    showError(telefono, 'Formato inválido: 10 dígitos, inicia con 0');
+    showError(telefono, "Formato inválido: 10 dígitos, inicia con 0", shake);
     updateProgress();
     return false;
   }
@@ -156,9 +202,9 @@ function validateTelefono() {
   return true;
 }
 
-function validatePais() {
+function validatePais(shake = false) {
   if (!pais.value) {
-    showError(pais, 'Selecciona un país');
+    showError(pais, "Selecciona un país", shake);
     updateProgress();
     return false;
   }
@@ -167,99 +213,96 @@ function validatePais() {
   return true;
 }
 
-function validateTerminos() {
-  const errorSpan = document.getElementById('error-terminos');
+function validateTerminos(shake = false) {
+  const span = document.getElementById("error-terminos");
+  const box = terminos.parentElement.querySelector(".checkbox-box");
   if (!terminos.checked) {
-    errorSpan.textContent = 'Debes aceptar los términos para continuar';
+    span.textContent = "Debes aceptar los términos para continuar";
+    if (shake) vibrar(box);
     updateProgress();
     return false;
   }
-  errorSpan.textContent = '';
+  span.textContent = "";
   updateProgress();
   return true;
 }
 
-// Validación en tiempo real mientras el usuario escribe
-nombre.addEventListener('input', validateNombre);
-edad.addEventListener('input', validateEdad);
-password.addEventListener('input', validatePassword);
-confirmPassword.addEventListener('input', validateConfirmPassword);
-
-// Validación al perder el foco (blur), y corrección en vivo si ya había error
-correo.addEventListener('blur', validateCorreo);
-correo.addEventListener('input', () => {
-  if (correo.classList.contains('invalid')) validateCorreo();
+const reglas = [
+  [nombre, validateNombre],
+  [correo, validateCorreo],
+  [password, validatePassword],
+  [confirmPassword, validateConfirmPassword],
+  [fechaNacimiento, validateFechaNacimiento],
+  [telefono, validateTelefono],
+];
+reglas.forEach(([el, fn]) => {
+  el.addEventListener("input", () => {
+    if (el.classList.contains("invalid") || el.value) fn(false);
+  });
+  el.addEventListener("blur", () => {
+    if (el.value) fn(true);
+  });
 });
+fechaNacimiento.addEventListener("change", () => validateFechaNacimiento(true));
+pais.addEventListener("change", () => validatePais(true));
+terminos.addEventListener("change", () => validateTerminos(false));
 
-telefono.addEventListener('blur', validateTelefono);
-telefono.addEventListener('input', () => {
-  if (telefono.classList.contains('invalid')) validateTelefono();
-});
-
-pais.addEventListener('change', validatePais);
-terminos.addEventListener('change', validateTerminos);
-
-// Botones para mostrar/ocultar contraseña
-document.querySelectorAll('.toggle-password').forEach(boton => {
-  boton.addEventListener('click', () => {
-    const targetInput = document.getElementById(boton.dataset.target);
-    const esVisible = targetInput.type === 'text';
-    targetInput.type = esVisible ? 'password' : 'text';
-    boton.setAttribute('aria-label', esVisible ? 'Mostrar contraseña' : 'Ocultar contraseña');
-    boton.classList.toggle('active', !esVisible);
+document.querySelectorAll(".toggle-password").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const input = document.getElementById(btn.dataset.target);
+    const visible = input.type === "text";
+    input.type = visible ? "password" : "text";
+    btn.setAttribute(
+      "aria-label",
+      visible ? "Mostrar contraseña" : "Ocultar contraseña",
+    );
+    btn.classList.toggle("active", !visible);
   });
 });
 
-// Efecto ripple al hacer clic en el botón de envío
-const submitBtn = document.getElementById('submitBtn');
-submitBtn.addEventListener('click', function (e) {
+submitBtn.addEventListener("click", (e) => {
   const rect = submitBtn.getBoundingClientRect();
-  const ripple = document.createElement('span');
   const size = Math.max(rect.width, rect.height);
-
-  ripple.className = 'ripple';
+  const ripple = document.createElement("span");
+  ripple.className = "ripple";
   ripple.style.width = ripple.style.height = `${size}px`;
   ripple.style.left = `${e.clientX - rect.left - size / 2}px`;
   ripple.style.top = `${e.clientY - rect.top - size / 2}px`;
-
   submitBtn.appendChild(ripple);
-  ripple.addEventListener('animationend', () => ripple.remove());
+  ripple.addEventListener("animationend", () => ripple.remove());
 });
 
-// Validación final al enviar el formulario
-form.addEventListener('submit', function (e) {
+form.addEventListener("submit", (e) => {
   e.preventDefault();
-
   const resultados = [
-    validateNombre(),
-    validateCorreo(),
-    validatePassword(),
-    validateConfirmPassword(),
-    validateEdad(),
-    validateTelefono(),
-    validatePais(),
-    validateTerminos()
+    validateNombre(true),
+    validateCorreo(true),
+    validatePassword(true),
+    validateConfirmPassword(true),
+    validateFechaNacimiento(true),
+    validateTelefono(true),
+    validatePais(true),
+    validateTerminos(true),
   ];
-
-  const formularioValido = resultados.every(Boolean);
-
-  if (formularioValido) {
-    formMessage.innerHTML = `
-      <svg class="check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
-      Registro exitoso. ¡Bienvenido/a!`;
-    formMessage.className = 'form-message success';
-
+  if (resultados.every(Boolean)) {
+    formMessage.textContent = "✔ Registro exitoso. ¡Bienvenido/a!";
+    formMessage.className = "form-message success";
     setTimeout(() => {
       form.reset();
-      document.querySelectorAll('input, select').forEach(el => el.classList.remove('valid', 'invalid'));
-      strengthFill.style.width = '0%';
-      strengthText.textContent = '';
-      progressFill.style.width = '0%';
-    }, 1800);
+      document
+        .querySelectorAll("input, select")
+        .forEach((el) => el.classList.remove("valid", "invalid"));
+      strengthFill.style.width = "0%";
+      strengthText.textContent = "";
+      progressFill.style.width = "0%";
+      formMessage.className = "form-message";
+      formMessage.textContent = "";
+    }, 2500);
   } else {
-    formMessage.textContent = 'Revisa los campos marcados en rojo antes de continuar.';
-    formMessage.className = 'form-message error';
+    formMessage.textContent =
+      "Revisa los campos marcados en rojo antes de continuar.";
+    formMessage.className = "form-message error";
+    vibrar(card, [100, 50, 100, 50, 100]);
+    vibrar(submitBtn, [100, 50, 100]);
   }
 });

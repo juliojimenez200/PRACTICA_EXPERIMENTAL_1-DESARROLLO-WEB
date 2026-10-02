@@ -1,15 +1,14 @@
 :root {
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
-  --color-primary-light: #60a5fa;
-  --color-error: #dc2626;
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-primary-light: #a5b4fc;
+  --color-error: #ef4444;
   --color-success: #16a34a;
   --color-text: #1f2937;
   --color-text-light: #6b7280;
-  --color-border: #d1d5db;
-  --color-bg: #f3f4f6;
+  --color-border: #e5e7eb;
   --color-white: #ffffff;
-  --radius: 8px;
+  --radius: 12px;
   --transition: 0.2s ease;
 }
 
@@ -20,69 +19,98 @@
 }
 
 body {
-  font-family: 'Segoe UI', Arial, sans-serif;
+  font-family: 'Segoe UI', system-ui, Arial, sans-serif;
   color: var(--color-text);
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  background: linear-gradient(120deg, #eef2ff, #f3f4f6, #e0f2fe, #f3f4f6);
+  background: linear-gradient(120deg, #c7d2fe, #e0f2fe, #fce7f3, #ddd6fe);
   background-size: 300% 300%;
   animation: gradientShift 14s ease infinite;
 }
 
 @keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  0% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
 }
 
 .container {
-  background: var(--color-white);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
   width: 100%;
-  max-width: 480px;
-  padding: 32px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.1);
+  max-width: 500px;
+  padding: 36px 32px;
+  border-radius: 20px;
+  box-shadow: 0 20px 50px rgba(79, 70, 229, 0.18);
   opacity: 0;
   animation: cardIn 0.6s ease forwards;
 }
 
 @keyframes cardIn {
-  from { opacity: 0; transform: translateY(16px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .form-header {
   text-align: center;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
+}
+
+.logo {
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: #fff;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--color-primary-light), var(--color-primary-dark));
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
 }
 
 .form-header h1 {
-  font-size: 1.6rem;
-  margin-bottom: 6px;
+  font-size: 1.7rem;
+  margin-bottom: 4px;
 }
 
 .form-header p {
   color: var(--color-text-light);
-  font-size: 0.9rem;
+  font-size: 0.92rem;
 }
 
-/* Barra de progreso */
 .progress-track {
-  height: 5px;
+  height: 6px;
   background: #e5e7eb;
   border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .progress-fill {
   height: 100%;
   width: 0%;
   border-radius: 999px;
-  background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary));
+  background: linear-gradient(90deg, var(--color-primary-light), var(--color-primary), #ec4899);
   transition: width 0.45s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
@@ -101,30 +129,65 @@ form {
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   opacity: 0;
   animation: fieldIn 0.45s ease forwards;
 }
 
 @keyframes fieldIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-form > .form-group:nth-of-type(1) { animation-delay: 0.05s; }
-form > .form-group:nth-of-type(2) { animation-delay: 0.1s; }
-form > .form-group:nth-of-type(3) { animation-delay: 0.15s; }
-form > .form-group:nth-of-type(4) { animation-delay: 0.2s; }
-form > .form-row:nth-of-type(1) .form-group:nth-of-type(1) { animation-delay: 0.25s; }
-form > .form-row:nth-of-type(1) .form-group:nth-of-type(2) { animation-delay: 0.3s; }
-form > .form-group:nth-of-type(5) { animation-delay: 0.35s; }
-.checkbox-group { animation-delay: 0.4s; }
-#submitBtn { animation: fieldIn 0.45s ease forwards; animation-delay: 0.45s; opacity: 0; }
+form>.form-group:nth-child(1) {
+  animation-delay: 0.05s;
+}
+
+form>.form-group:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+form>.form-group:nth-child(3) {
+  animation-delay: 0.15s;
+}
+
+form>.form-group:nth-child(4) {
+  animation-delay: 0.2s;
+}
+
+form>.form-row {
+  opacity: 0;
+  animation: fieldIn 0.45s ease 0.25s forwards;
+}
+
+form>.form-row .form-group {
+  animation: none;
+  opacity: 1;
+}
+
+form>.form-group:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.checkbox-group {
+  animation-delay: 0.35s;
+}
+
+#submitBtn {
+  animation: fieldIn 0.45s ease 0.4s forwards;
+  opacity: 0;
+}
 
 label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-text);
 }
 
 .input-wrapper {
@@ -134,71 +197,39 @@ label {
 input[type="text"],
 input[type="email"],
 input[type="password"],
-input[type="number"],
 input[type="tel"],
+input[type="date"],
 select {
-  padding: 10px 12px;
-  border: 1px solid var(--color-border);
+  padding: 12px 14px;
+  border: 1.5px solid var(--color-border);
   border-radius: var(--radius);
   font-size: 0.95rem;
   font-family: inherit;
-  transition: border-color var(--transition), box-shadow var(--transition), background-color var(--transition);
   width: 100%;
-  background-color: var(--color-white);
-}
-
-input.has-icon,
-select.has-icon {
-  padding-left: 38px;
+  background-color: #fafafa;
+  transition: border-color var(--transition), box-shadow var(--transition), background-color var(--transition);
 }
 
 input.has-toggle {
-  padding-right: 40px;
+  padding-right: 44px;
 }
 
-.input-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 17px;
-  height: 17px;
-  color: var(--color-text-light);
-  pointer-events: none;
-  transition: color var(--transition);
-}
-
-.valid-check {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%) scale(0.5);
-  width: 16px;
-  height: 16px;
-  color: var(--color-success);
-  opacity: 0;
-  transition: opacity 0.25s ease, transform 0.25s ease;
+input[type="date"] {
+  min-height: 46px;
 }
 
 input:focus,
 select:focus {
   outline: none;
+  background-color: #fff;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
-}
-
-input:focus ~ .input-icon,
-select:focus ~ .input-icon {
-  color: var(--color-primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.18);
 }
 
 input.invalid,
 select.invalid {
   border-color: var(--color-error);
-}
-
-input.invalid ~ .input-icon {
-  color: var(--color-error);
+  background-color: #fef2f2;
 }
 
 input.valid,
@@ -206,28 +237,80 @@ select.valid {
   border-color: var(--color-success);
 }
 
-input.valid ~ .valid-check {
+.valid-check {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%) scale(0.5);
+  color: var(--color-success);
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+
+input.valid~.valid-check {
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
 
-/* Animación de error (shake) */
 .shake {
-  animation: shake 0.4s ease;
+  animation: vibrate 0.5s cubic-bezier(.36, .07, .19, .97) both;
 }
 
-@keyframes shake {
-  10%, 90% { transform: translateX(-1px); }
-  20%, 80% { transform: translateX(2px); }
-  30%, 50%, 70% { transform: translateX(-4px); }
-  40%, 60% { transform: translateX(4px); }
+@keyframes vibrate {
+
+  0%,
+  100% {
+    transform: translateX(0) rotate(0);
+  }
+
+  10% {
+    transform: translateX(-8px) rotate(-0.8deg);
+  }
+
+  20% {
+    transform: translateX(8px) rotate(0.8deg);
+  }
+
+  30% {
+    transform: translateX(-7px) rotate(-0.6deg);
+  }
+
+  40% {
+    transform: translateX(7px) rotate(0.6deg);
+  }
+
+  50% {
+    transform: translateX(-5px);
+  }
+
+  60% {
+    transform: translateX(5px);
+  }
+
+  70% {
+    transform: translateX(-3px);
+  }
+
+  80% {
+    transform: translateX(3px);
+  }
+
+  90% {
+    transform: translateX(-1px);
+  }
+}
+
+input.shake,
+select.shake {
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25);
 }
 
 .error-message {
   font-size: 0.78rem;
   line-height: 1.35;
   color: var(--color-error);
-  min-height: 14px;
   max-height: 0;
   overflow: hidden;
   opacity: 0;
@@ -239,7 +322,6 @@ input.valid ~ .valid-check {
   opacity: 1;
 }
 
-/* Toggle de contraseña */
 .toggle-password {
   position: absolute;
   right: 10px;
@@ -248,33 +330,22 @@ input.valid ~ .valid-check {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--color-text-light);
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: color var(--transition), transform 0.2s ease;
+  font-size: 1rem;
+  opacity: 0.55;
+  transition: opacity var(--transition), transform 0.2s ease;
 }
 
-.toggle-password svg {
-  width: 100%;
-  height: 100%;
+.toggle-password:hover,
+.toggle-password.active {
+  opacity: 1;
+  transform: translateY(-50%) scale(1.15);
 }
 
-.toggle-password:hover {
-  color: var(--color-primary);
-  transform: translateY(-50%) scale(1.1);
-}
-
-/* Medidor de fortaleza de contraseña */
 .strength-meter {
-  height: 4px;
+  height: 5px;
   border-radius: 999px;
   background: #e5e7eb;
   overflow: hidden;
-  margin-top: 2px;
 }
 
 .strength-fill {
@@ -288,12 +359,6 @@ input.valid ~ .valid-check {
   font-size: 0.72rem;
   color: var(--color-text-light);
   min-height: 12px;
-  transition: color 0.3s ease;
-}
-
-/* Checkbox personalizado */
-.checkbox-group {
-  flex-direction: column;
 }
 
 .checkbox-wrapper {
@@ -314,10 +379,10 @@ input.valid ~ .valid-check {
 }
 
 .checkbox-box {
-  width: 19px;
-  height: 19px;
-  border: 1.5px solid var(--color-border);
-  border-radius: 5px;
+  width: 21px;
+  height: 21px;
+  border: 2px solid var(--color-border);
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -328,50 +393,52 @@ input.valid ~ .valid-check {
 .checkbox-box svg {
   width: 13px;
   height: 13px;
-  color: var(--color-white);
+  color: #fff;
   stroke-dasharray: 20;
   stroke-dashoffset: 20;
   transition: stroke-dashoffset 0.25s ease 0.05s;
 }
 
-.checkbox-wrapper input:checked ~ .checkbox-box {
+.checkbox-wrapper input:checked~.checkbox-box {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
   transform: scale(1.05);
 }
 
-.checkbox-wrapper input:checked ~ .checkbox-box svg {
+.checkbox-wrapper input:checked~.checkbox-box svg {
   stroke-dashoffset: 0;
 }
 
-.checkbox-wrapper:active .checkbox-box {
-  transform: scale(0.92);
+.checkbox-wrapper input:focus-visible~.checkbox-box {
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.25);
 }
 
-/* Botón de envío */
 button[type="submit"] {
   position: relative;
   overflow: hidden;
-  background-color: var(--color-primary);
-  color: var(--color-white);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: #fff;
   border: none;
-  padding: 12px;
+  padding: 14px;
   border-radius: var(--radius);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color var(--transition), transform 0.15s ease, box-shadow 0.2s ease;
-  margin-top: 8px;
+  margin-top: 6px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 
 button[type="submit"]:hover {
-  background-color: var(--color-primary-dark);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
-  transform: translateY(-1px);
+  box-shadow: 0 10px 22px rgba(79, 70, 229, 0.4);
+  transform: translateY(-2px);
 }
 
 button[type="submit"]:active {
   transform: translateY(0);
+}
+
+button[type="submit"].shake {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
 }
 
 .ripple {
@@ -384,15 +451,13 @@ button[type="submit"]:active {
 }
 
 @keyframes rippleEffect {
-  to { transform: scale(3); opacity: 0; }
+  to {
+    transform: scale(3);
+    opacity: 0;
+  }
 }
 
-/* Mensaje final */
 .form-message {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
   text-align: center;
   font-size: 0.9rem;
   min-height: 20px;
@@ -407,31 +472,27 @@ button[type="submit"]:active {
   transform: translateY(0);
 }
 
-.form-message.success { color: var(--color-success); }
-.form-message.error { color: var(--color-error); }
-
-.form-message .check-circle {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
+.form-message.success {
+  color: var(--color-success);
+  font-weight: 600;
 }
 
-.form-message .check-circle path {
-  stroke-dasharray: 24;
-  stroke-dashoffset: 24;
-  animation: drawCheck 0.4s ease forwards 0.1s;
+.form-message.error {
+  color: var(--color-error);
 }
 
-@keyframes drawCheck {
-  to { stroke-dashoffset: 0; }
-}
-
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   .form-row {
     grid-template-columns: 1fr;
   }
 
   .container {
-    padding: 24px 20px;
+    padding: 26px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shake {
+    animation-duration: 0.01s;
   }
 }
