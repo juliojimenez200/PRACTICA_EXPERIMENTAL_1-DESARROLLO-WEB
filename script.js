@@ -19,7 +19,7 @@ const camposRequeridos = [nombre, correo, password, confirmPassword, edad, telef
 const patterns = {
   nombre: /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{3,50}$/,
   correo: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-  password: /^(?=.*[A-Z])(?=.*\d).{8,}$/,
+  password: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
   telefono: /^0\d{9}$/
 };
 
@@ -111,7 +111,7 @@ function validatePassword() {
   updatePasswordStrength();
 
   if (!patterns.password.test(password.value)) {
-    showError(password, 'Mínimo 8 caracteres, con una mayúscula y un número');
+    showError(password, 'Mínimo 8 caracteres: mayúscula, número y carácter especial (ej: !@#$)');
     updateProgress();
     return false;
   }

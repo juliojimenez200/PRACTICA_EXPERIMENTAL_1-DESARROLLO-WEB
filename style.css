@@ -111,12 +111,13 @@ form {
   to { opacity: 1; transform: translateY(0); }
 }
 
-.form-group:nth-of-type(1) { animation-delay: 0.05s; }
-.form-group:nth-of-type(2) { animation-delay: 0.1s; }
-.form-row:nth-of-type(1) .form-group:nth-of-type(1) { animation-delay: 0.15s; }
-.form-row .form-group:nth-of-type(2) { animation-delay: 0.2s; }
-.form-group:nth-of-type(5) { animation-delay: 0.3s; }
-.form-group:nth-of-type(6) { animation-delay: 0.35s; }
+form > .form-group:nth-of-type(1) { animation-delay: 0.05s; }
+form > .form-group:nth-of-type(2) { animation-delay: 0.1s; }
+form > .form-group:nth-of-type(3) { animation-delay: 0.15s; }
+form > .form-group:nth-of-type(4) { animation-delay: 0.2s; }
+form > .form-row:nth-of-type(1) .form-group:nth-of-type(1) { animation-delay: 0.25s; }
+form > .form-row:nth-of-type(1) .form-group:nth-of-type(2) { animation-delay: 0.3s; }
+form > .form-group:nth-of-type(5) { animation-delay: 0.35s; }
 .checkbox-group { animation-delay: 0.4s; }
 #submitBtn { animation: fieldIn 0.45s ease forwards; animation-delay: 0.45s; opacity: 0; }
 
@@ -224,6 +225,7 @@ input.valid ~ .valid-check {
 
 .error-message {
   font-size: 0.78rem;
+  line-height: 1.35;
   color: var(--color-error);
   min-height: 14px;
   max-height: 0;
@@ -233,7 +235,7 @@ input.valid ~ .valid-check {
 }
 
 .error-message:not(:empty) {
-  max-height: 20px;
+  max-height: 48px;
   opacity: 1;
 }
 
