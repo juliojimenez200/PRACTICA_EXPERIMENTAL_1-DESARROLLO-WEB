@@ -7,6 +7,8 @@ const confirmPassword = document.getElementById("confirmPassword");
 const fechaNacimiento = document.getElementById("fechaNacimiento");
 const telefono = document.getElementById("telefono");
 const pais = document.getElementById("pais");
+const otroPais = document.getElementById("otroPais");
+const otroPaisGroup = document.getElementById("otroPaisGroup");
 const terminos = document.getElementById("terminos");
 const formMessage = document.getElementById("formMessage");
 const progressFill = document.getElementById("progressFill");
@@ -31,6 +33,26 @@ const patterns = {
   password: /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/,
   telefono: /^0\d{9}$/,
 };
+const codigosPaises = `AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW`;
+const normalizarPais = (valor) =>
+  valor
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLocaleLowerCase();
+const nombresPais = new Set();
+const nombresPaisEspanol = new Intl.DisplayNames(["es"], { type: "region" });
+const nombresPaisIngles = new Intl.DisplayNames(["en"], { type: "region" });
+codigosPaises.split(" ").forEach((codigo) => {
+  const nombre = nombresPaisEspanol.of(codigo);
+  const nombreIngles = nombresPaisIngles.of(codigo);
+  if (nombre && nombre !== codigo) {
+    nombresPais.add(normalizarPais(nombre));
+  }
+  if (nombreIngles && nombreIngles !== codigo) {
+    nombresPais.add(normalizarPais(nombreIngles));
+  }
+});
 
 function toISO(d) {
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -204,9 +226,22 @@ function validateTelefono(shake = false) {
 
 function validatePais(shake = false) {
   if (!pais.value) {
+    clearError(otroPais);
     showError(pais, "Selecciona un país", shake);
     updateProgress();
     return false;
+  }
+  if (pais.value === "Otro") {
+    const nombreEscrito = normalizarPais(otroPais.value);
+    if (!nombreEscrito || !nombresPais.has(nombreEscrito)) {
+      showError(otroPais, "Escribe un país válido", shake);
+      pais.classList.remove("valid");
+      updateProgress();
+      return false;
+    }
+    clearError(otroPais);
+  } else {
+    clearError(otroPais);
   }
   clearError(pais);
   updateProgress();
@@ -244,7 +279,19 @@ reglas.forEach(([el, fn]) => {
   });
 });
 fechaNacimiento.addEventListener("change", () => validateFechaNacimiento(true));
-pais.addEventListener("change", () => validatePais(true));
+function actualizarCampoOtroPais() {
+  const mostrar = pais.value === "Otro";
+  otroPaisGroup.hidden = !mostrar;
+  if (!mostrar) otroPais.value = "";
+  validatePais(false);
+}
+pais.addEventListener("change", actualizarCampoOtroPais);
+otroPais.addEventListener("input", () => {
+  if (pais.value === "Otro") validatePais(false);
+});
+otroPais.addEventListener("blur", () => {
+  if (pais.value === "Otro" && otroPais.value) validatePais(true);
+});
 terminos.addEventListener("change", () => validateTerminos(false));
 
 document.querySelectorAll(".toggle-password").forEach((btn) => {
@@ -289,6 +336,8 @@ form.addEventListener("submit", (e) => {
     formMessage.className = "form-message success";
     setTimeout(() => {
       form.reset();
+      otroPaisGroup.hidden = true;
+      otroPais.value = "";
       document
         .querySelectorAll("input, select")
         .forEach((el) => el.classList.remove("valid", "invalid"));

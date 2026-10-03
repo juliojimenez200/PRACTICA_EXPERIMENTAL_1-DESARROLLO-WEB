@@ -134,6 +134,10 @@ form {
   animation: fieldIn 0.45s ease forwards;
 }
 
+.form-group[hidden] {
+  display: none;
+}
+
 @keyframes fieldIn {
   from {
     opacity: 0;
